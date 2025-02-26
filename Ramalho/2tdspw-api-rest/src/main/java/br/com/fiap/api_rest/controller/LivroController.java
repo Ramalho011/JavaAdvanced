@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,11 +39,18 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<LivroResponse>> readLivros() {
-        Pageable pageable = PageRequest
-                .of(0,2, Sort.by("titulo").ascending());
-        //Page<Livro> livros = livroRepository.findAll(pageable);
-        return new ResponseEntity<>(livroService.findAll(pageable),HttpStatus.OK);
+    public ResponseEntity<Page<BookRes>> readLivros(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "2") int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("title").ascending());
+        Page<Book> pageLivros = bookRepository.findAll(pageable);
+        Page<BookRes> listaLivrosRes = bookService.pageToRes(pageLivros);
+        for (LivroResponse livro: livros)
+            livro.setLink(
+                    linkTo(
+                            method0n(LivroController.class)
+                                    .readLivro(livro.getId())
+                    )
+            )
+        return new ResponseEntity<>(listaLivrosRes, HttpStatus.OK);
     }
 
     // @PathVariable localhost:8080/livros/1
@@ -53,7 +61,22 @@ public class LivroController {
         if (livro.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        LivroResponse livroResponse = livroService.livroToResponse(livro.get());
+        Object pageNumber;
+        livroResponse.setLink(
+                linkTo(
+                        method0n(LivroController.class)
+                                .readLivro(pageNumber:0)
+                ).withReal("lista de livros")
+
+        );
         return new ResponseEntity<>(livroService.livroToResponse(livro.get()),HttpStatus.OK);
+    }
+
+    private Object linkTo(ResponseEntity<LivroResponse> livroResponseResponseEntity) {
+    }
+
+    private LivroController method0n(Class<LivroController> livroControllerClass) {
     }
 
     @PutMapping("/{id}")

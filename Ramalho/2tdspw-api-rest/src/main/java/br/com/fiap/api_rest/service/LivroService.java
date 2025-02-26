@@ -1,8 +1,10 @@
 package br.com.fiap.api_rest.service;
 
+import br.com.fiap.api_rest.controller.LivroController;
 import br.com.fiap.api_rest.dto.LivroRequest;
 import br.com.fiap.api_rest.dto.LivroRequestDTO;
 import br.com.fiap.api_rest.dto.LivroResponse;
+import br.com.fiap.api_rest.dto.LivroResponseDTO;
 import br.com.fiap.api_rest.model.Livro;
 import br.com.fiap.api_rest.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,11 @@ public class LivroService {
         return new LivroResponse(livro.getAutor() + " - " + livro.getTitulo());
     }
 
+    public LivroResponseDTO livroToResponseDTO(Livro livro) {
+        Link link =linkTo(method0n(LivroController.class)redLivro(págeNumber:0)).withreal("lista de livros")
+        return new LivroResponse(livro.getAutor() + " - " + livro.getTitulo());
+    }
+
     public List<LivroResponse> livrosToResponse(List<Livro> livros) {
         List<LivroResponse> listaLivros = new ArrayList<>();
         for (Livro livro : livros) {
@@ -49,4 +56,7 @@ public class LivroService {
     public Page<LivroResponse> findAll(Pageable pageable){
         return  livroRepository.findAll(pageable).map(this::livroToResponse);
     }
+
+    public page<LivroResponse> findAllDTO(Pageable pegeable)
+
 }
