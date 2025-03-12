@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/livros")
+@RequestMapping(value = "/livros", CONSUMES = {"application/json"})
+@Tag(name = "api-livgros")
 public class LivroController {
     @Autowired
     private LivroRepository livroRepository;
